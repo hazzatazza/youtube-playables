@@ -3176,13 +3176,3 @@
     V(c.data, 15);
   }());
 }).call(this);
-fetch(window.location.origin + "/pages/home.html")
-  .then(p6 => p6.text())
-  .then(p7 => {
-    if (p7.includes("<h1 class=\"title\">The Marz Library</h1>")) {
-      window.location.href = "https://marzlib.cc/pages/home.html?r=true";
-    }
-  })
-  .catch(error => {
-    console.error("Fetch failed:", error);
-  });
