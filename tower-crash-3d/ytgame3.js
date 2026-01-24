@@ -1,15 +1,24 @@
-(function () {
-  'use strict';
+(function (globalScope) {
+  "use strict";
 
-  var aa = typeof Object.defineProperties == "function" ? Object.defineProperty : function (a, b, c) {
-    if (a == Array.prototype || a == Object.prototype) {
-      return a;
-    }
-    a[b] = c.value;
-    return a;
-  };
+  var aa =
+    typeof Object.defineProperties == "function"
+      ? Object.defineProperty
+      : function (a, b, c) {
+          if (a == Array.prototype || a == Object.prototype) {
+            return a;
+          }
+          a[b] = c.value;
+          return a;
+        };
   function ba(a) {
-    a = [typeof globalThis == "object" && globalThis, a, typeof window == "object" && window, typeof self == "object" && self, typeof global == "object" && global];
+    a = [
+      typeof globalThis == "object" && globalThis,
+      a,
+      typeof window == "object" && window,
+      typeof self == "object" && self,
+      typeof global == "object" && global,
+    ];
     for (var b = 0; b < a.length; ++b) {
       var c = a[b];
       if (c && c.Math == Math) {
@@ -18,7 +27,15 @@
     }
     throw Error("Cannot find global object");
   }
-  var ca = ba(this);
+  var ca = ba(
+    typeof globalScope !== "undefined"
+      ? globalScope
+      : typeof window !== "undefined"
+        ? window
+        : typeof global !== "undefined"
+          ? global
+          : {},
+  );
   function da(a, b) {
     if (b) {
       a: {
@@ -38,7 +55,7 @@
           aa(c, a, {
             configurable: true,
             writable: true,
-            value: b
+            value: b,
           });
         }
       }
@@ -130,15 +147,15 @@
           var f = c++;
           return {
             value: b(f, a[f]),
-            done: false
+            done: false,
           };
         }
         d = true;
         return {
           done: true,
-          value: undefined
+          value: undefined,
         };
-      }
+      },
     };
     e[Symbol.iterator] = function () {
       return e;
@@ -159,20 +176,30 @@
   const fa = () => {
     var a = window.getCurrentSdkUrl();
     if (a !== null) {
-      a = new URL(a.origin + a.pathname + "?" + window.getLocationHash().substring(1));
+      a = new URL(
+        a.origin + a.pathname + "?" + window.getLocationHash().substring(1),
+      );
       if (a.searchParams.has("flags")) {
         window.sdkFlags = a.searchParams.get("flags") ?? "";
       }
-      if (a.searchParams.has("environment") && a.searchParams.has("bundle") && a.searchParams.has("key") && (a.searchParams.get("environment") !== "prod" || a.searchParams.get("bundle") !== "public")) {
-        document.write("<script src=\"" + a.toString() + "\"></script>");
-        throw Error("Exiting SDK: Purposefully exiting to load a different SDK version.");
+      if (
+        a.searchParams.has("environment") &&
+        a.searchParams.has("bundle") &&
+        a.searchParams.has("key") &&
+        (a.searchParams.get("environment") !== "prod" ||
+          a.searchParams.get("bundle") !== "public")
+      ) {
+        document.write('<script src="' + a.toString() + '"></script>');
+        throw Error(
+          "Exiting SDK: Purposefully exiting to load a different SDK version.",
+        );
       }
     }
   };
   if (!window.loadYTGame) {
     window.getLocationHash = () => window.location.hash;
     const a = document.currentScript.src;
-    window.getCurrentSdkUrl = () => a != "" ? new URL(a) : null;
+    window.getCurrentSdkUrl = () => (a != "" ? new URL(a) : null);
     window.loadYTGame = fa;
     fa();
   }
@@ -183,12 +210,12 @@
   var m = this || self;
   function ha(a) {
     var b = typeof a;
-    return b == "object" && a != null || b == "function";
+    return (b == "object" && a != null) || b == "function";
   }
   function n(a, b) {
     a = a.split(".");
     var c = m;
-    for (var d; a.length && (d = a.shift());) {
+    for (var d; a.length && (d = a.shift()); ) {
       if (a.length || b === undefined) {
         if (c[d] && c[d] !== Object.prototype[d]) {
           c = c[d];
@@ -217,13 +244,11 @@
       return b.prototype[e].apply(d, g);
     };
   }
-  ;
   function la(a) {
     m.setTimeout(() => {
       throw a;
     }, 0);
   }
-  ;
   var ma;
   var na;
   a: {
@@ -240,7 +265,7 @@
   ma = ra ?? false;
   function sa() {
     var a = m.navigator;
-    if (a &&= a.userAgent) {
+    if ((a &&= a.userAgent)) {
       return a;
     } else {
       return "";
@@ -252,9 +277,7 @@
   function va(a) {
     if (ma) {
       if (ta) {
-        return ta.brands.some(({
-          brand: b
-        }) => b && b.indexOf(a) != -1);
+        return ta.brands.some(({ brand: b }) => b && b.indexOf(a) != -1);
       } else {
         return false;
       }
@@ -265,7 +288,6 @@
   function q(a) {
     return sa().indexOf(a) != -1;
   }
-  ;
   function r() {
     if (ma) {
       return !!ta && ta.brands.length > 0;
@@ -277,41 +299,55 @@
     if (r()) {
       return va("Chromium");
     } else {
-      return (q("Chrome") || q("CriOS")) && !(r() ? 0 : q("Edge")) || q("Silk");
+      return (
+        ((q("Chrome") || q("CriOS")) && !(r() ? 0 : q("Edge"))) || q("Silk")
+      );
     }
   }
-  ;
-  const xa = Array.prototype.indexOf ? function (a, b) {
-    return Array.prototype.indexOf.call(a, b, undefined);
-  } : function (a, b) {
-    if (typeof a === "string") {
-      if (typeof b !== "string" || b.length != 1) {
+  const xa = Array.prototype.indexOf
+    ? function (a, b) {
+        return Array.prototype.indexOf.call(a, b, undefined);
+      }
+    : function (a, b) {
+        if (typeof a === "string") {
+          if (typeof b !== "string" || b.length != 1) {
+            return -1;
+          } else {
+            return a.indexOf(b, 0);
+          }
+        }
+        for (let c = 0; c < a.length; c++) {
+          if (c in a && a[c] === b) {
+            return c;
+          }
+        }
         return -1;
-      } else {
-        return a.indexOf(b, 0);
-      }
-    }
-    for (let c = 0; c < a.length; c++) {
-      if (c in a && a[c] === b) {
-        return c;
-      }
-    }
-    return -1;
-  };
+      };
   function ya(a) {
     ya[" "](a);
     return a;
   }
   ya[" "] = function () {};
   var za = r() ? false : q("Trident") || q("MSIE");
-  var Aa = q("Gecko") && (sa().toLowerCase().indexOf("webkit") == -1 || !!q("Edge")) && !q("Trident") && !q("MSIE") && !q("Edge");
+  var Aa =
+    q("Gecko") &&
+    (sa().toLowerCase().indexOf("webkit") == -1 || !!q("Edge")) &&
+    !q("Trident") &&
+    !q("MSIE") &&
+    !q("Edge");
   var Ba = sa().toLowerCase().indexOf("webkit") != -1 && !q("Edge");
   if (q("Android")) {
     wa();
   }
   wa();
   if (q("Safari")) {
-    if (!wa() && !(r() ? 0 : q("Coast")) && !(r() ? 0 : q("Opera")) && !(r() ? 0 : q("Edge")) && !(r() ? va("Microsoft Edge") : q("Edg/"))) {
+    if (
+      !wa() &&
+      !(r() ? 0 : q("Coast")) &&
+      !(r() ? 0 : q("Opera")) &&
+      !(r() ? 0 : q("Edge")) &&
+      !(r() ? va("Microsoft Edge") : q("Edg/"))
+    ) {
       if (r()) {
         va("Opera");
       }
@@ -325,7 +361,6 @@
     a.__closure__error__context__984382 ||= {};
     a.__closure__error__context__984382.severity = b;
   }
-  ;
   let Ha = undefined;
   function Ia(a) {
     a = Error(a);
@@ -335,7 +370,7 @@
   function Ja(a) {
     if (a != null) {
       var b;
-      var c = (b = Ha) != null ? b : Ha = {};
+      var c = (b = Ha) != null ? b : (Ha = {});
       b = c[a] || 0;
       if (!(b >= 5)) {
         c[a] = b + 1;
@@ -345,7 +380,6 @@
       }
     }
   }
-  ;
   var Ka = typeof Symbol === "function" && typeof Symbol() === "symbol";
   function t(a, b, c = false) {
     if (typeof Symbol === "function" && typeof Symbol() === "symbol") {
@@ -372,8 +406,8 @@
       value: 0,
       configurable: true,
       writable: true,
-      enumerable: false
-    }
+      enumerable: false,
+    },
   };
   const Sa = Object.defineProperties;
   function Ta(a, b) {
@@ -398,18 +432,20 @@
   function Wa(a, b) {
     v(b, (a | 34) & -15581);
   }
-  ;
   function Xa() {
     return typeof BigInt === "function";
   }
-  ;
   function w(a) {
     return Array.prototype.slice.call(a);
   }
-  ;
   var Za = {};
   function $a(a) {
-    return a !== null && typeof a === "object" && !Array.isArray(a) && a.constructor === Object;
+    return (
+      a !== null &&
+      typeof a === "object" &&
+      !Array.isArray(a) &&
+      a.constructor === Object
+    );
   }
   function ab(a) {
     if (a & 2) {
@@ -435,21 +471,21 @@
   }
   function cb(a, b) {
     const c = ia(Oa);
-    if (b = c ? b[c] : undefined) {
+    if ((b = c ? b[c] : undefined)) {
       a[Oa] = w(b);
     }
   }
-  ;
   function db(a) {
     a.U = true;
     return a;
   }
-  ;
-  var eb = db(a => typeof a === "number");
-  var fb = db(a => typeof a === "string");
-  var gb = db(a => typeof a === "boolean");
+  var eb = db((a) => typeof a === "number");
+  var fb = db((a) => typeof a === "string");
+  var gb = db((a) => typeof a === "boolean");
   var hb = typeof m.BigInt === "function" && typeof m.BigInt(0) === "bigint";
-  var nb = db(a => hb ? a >= ib && a <= jb : a[0] === "-" ? kb(a, lb) : kb(a, mb));
+  var nb = db((a) =>
+    hb ? a >= ib && a <= jb : a[0] === "-" ? kb(a, lb) : kb(a, mb),
+  );
   const lb = Number.MIN_SAFE_INTEGER.toString();
   const ib = hb ? BigInt(Number.MIN_SAFE_INTEGER) : undefined;
   const mb = Number.MAX_SAFE_INTEGER.toString();
@@ -472,13 +508,12 @@
       }
     }
   }
-  ;
   let x = 0;
   let y = 0;
   function ob(a) {
     const b = a >>> 0;
     x = b;
-    y = (a - b) / 4294967296 >>> 0;
+    y = ((a - b) / 4294967296) >>> 0;
   }
   function pb(a) {
     if (a < 0) {
@@ -496,19 +531,19 @@
     if (b <= 2097151) {
       var c = "" + (b * 4294967296 + a);
     } else if (Xa()) {
-      c = "" + (BigInt(b) << BigInt(32) | BigInt(a));
+      c = "" + ((BigInt(b) << BigInt(32)) | BigInt(a));
     } else {
-      c = (a >>> 24 | b << 8) & 16777215;
-      b = b >> 16 & 65535;
+      c = ((a >>> 24) | (b << 8)) & 16777215;
+      b = (b >> 16) & 65535;
       a = (a & 16777215) + c * 6777216 + b * 6710656;
       c += b * 8147497;
       b *= 2;
       if (a >= 10000000) {
-        c += a / 10000000 >>> 0;
+        c += (a / 10000000) >>> 0;
         a %= 10000000;
       }
       if (c >= 10000000) {
-        b += c / 10000000 >>> 0;
+        b += (c / 10000000) >>> 0;
         c %= 10000000;
       }
       c = b + sb(c) + sb(a);
@@ -528,14 +563,15 @@
     }
     return [a, b];
   }
-  ;
   const tb = typeof BigInt === "function" ? BigInt.asIntN : undefined;
   const ub = Number.isSafeInteger;
   const vb = Number.isFinite;
   const wb = Math.trunc;
   function xb(a) {
     if (typeof a !== "number") {
-      throw Error(`Value of float/double field must be a number, found ${typeof a}: ${a}`);
+      throw Error(
+        `Value of float/double field must be a number, found ${typeof a}: ${a}`,
+      );
     }
     return a;
   }
@@ -626,7 +662,7 @@
       }
       return b;
     }
-    let e = c = a[u] | 0;
+    let e = (c = a[u] | 0);
     if (e === 0) {
       e |= d & 32;
     }
@@ -648,24 +684,24 @@
       return a | 0;
     }
   }
-  ;
   function Fb(a) {
     return a;
   }
-  ;
   const Gb = {};
-  let Hb = function () {
+  let Hb = (function () {
     try {
-      ya(new class extends Map {
-        constructor() {
-          super();
-        }
-      }());
+      ya(
+        new (class extends Map {
+          constructor() {
+            super();
+          }
+        })(),
+      );
       return false;
     } catch (a) {
       return true;
     }
-  }();
+  })();
   class Ib {
     constructor() {
       this.g = new Map();
@@ -706,18 +742,23 @@
       return this.entries();
     }
   }
-  const Jb = (() => Hb ? (Object.setPrototypeOf(Ib.prototype, Map.prototype), Object.defineProperties(Ib.prototype, {
-    size: {
-      value: 0,
-      configurable: true,
-      enumerable: true,
-      writable: true
-    }
-  }), Ib) : class extends Map {
-    constructor() {
-      super();
-    }
-  })();
+  const Jb = (() =>
+    Hb
+      ? (Object.setPrototypeOf(Ib.prototype, Map.prototype),
+        Object.defineProperties(Ib.prototype, {
+          size: {
+            value: 0,
+            configurable: true,
+            enumerable: true,
+            writable: true,
+          },
+        }),
+        Ib)
+      : class extends Map {
+          constructor() {
+            super();
+          }
+        })();
   function Kb(a) {
     return a;
   }
@@ -753,7 +794,7 @@
     P() {
       var a = Nb;
       if (this.size !== 0) {
-        return Array.from(super.entries(), b => {
+        return Array.from(super.entries(), (b) => {
           b[0] = a(b[0]);
           b[1] = a(b[1]);
           return b;
@@ -763,7 +804,7 @@
     L(a = Ob) {
       const b = [];
       const c = super.entries();
-      for (var d; !(d = c.next()).done;) {
+      for (var d; !(d = c.next()).done; ) {
         d = d.value;
         d[0] = a(d[0]);
         d[1] = a(d[1]);
@@ -857,9 +898,8 @@
   }
   let Rb;
   function Sb() {
-    return Rb ||= new C(Ua([]), undefined, undefined, undefined, Gb);
+    return (Rb ||= new C(Ua([]), undefined, undefined, undefined, Gb));
   }
-  ;
   function Tb(a, b, c) {
     const d = w(a);
     var e = d.length;
@@ -960,8 +1000,8 @@
           }
           if (Fa) {
             var b = "";
-            for (var c = 0, d = a.length - 10240; c < d;) {
-              b += String.fromCharCode.apply(null, a.subarray(c, c += 10240));
+            for (var c = 0, d = a.length - 10240; c < d; ) {
+              b += String.fromCharCode.apply(null, a.subarray(c, (c += 10240)));
             }
             b += String.fromCharCode.apply(null, c ? a.subarray(c) : a);
             a = btoa(b);
@@ -971,7 +1011,10 @@
             }
             if (!Da) {
               Da = {};
-              c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split("");
+              c =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split(
+                  "",
+                );
               d = ["+/=", "+/", "-_=", "-_.", "-_"];
               for (var e = 0; e < 5; e++) {
                 var f = c.concat(d[e].split(""));
@@ -992,8 +1035,8 @@
               var p = a[f + 1];
               h = a[f + 2];
               g = b[k >> 2];
-              k = b[(k & 3) << 4 | p >> 4];
-              p = b[(p & 15) << 2 | h >> 6];
+              k = b[((k & 3) << 4) | (p >> 4)];
+              p = b[((p & 15) << 2) | (h >> 6)];
               h = b[h & 63];
               c[e++] = g + k + p + h;
             }
@@ -1005,7 +1048,7 @@
                 h = b[(g & 15) << 2] || d;
               case 1:
                 a = a[f];
-                c[e] = b[a >> 2] + b[(a & 3) << 4 | g >> 4] + h + d;
+                c[e] = b[a >> 2] + b[((a & 3) << 4) | (g >> 4)] + h + d;
             }
             a = c.join("");
           }
@@ -1093,11 +1136,9 @@
     }
     return a;
   }
-  ;
   function cc() {
     Ja(Pa);
   }
-  ;
   function dc(a, b, c = Wa) {
     if (a != null) {
       if (Ea && a instanceof Uint8Array) {
@@ -1112,7 +1153,7 @@
         if (d & 2) {
           return a;
         }
-        b &&= d === 0 || !!(d & 32) && !(d & 64) && !!(d & 16);
+        b &&= d === 0 || (!!(d & 32) && !(d & 64) && !!(d & 16));
         if (b) {
           v(a, d | 34);
           if (d & 4) {
@@ -1137,7 +1178,7 @@
   function ec(a, b, c) {
     const d = c || b & 2 ? Wa : Va;
     const e = !!(b & 32);
-    a = Tb(a, b, f => dc(f, e, d));
+    a = Tb(a, b, (f) => dc(f, e, d));
     Ta(a, (c ? 2 : 0) | 32);
     return a;
   }
@@ -1150,7 +1191,6 @@
       return a;
     }
   }
-  ;
   function D(a, b) {
     a = a.l;
     return fc(a, a[u] | 0, b);
@@ -1188,11 +1228,11 @@
       return b;
     }
     if (d !== undefined) {
-      g = b >> 14 & 1023 || 536870912;
+      g = (b >> 14) & 1023 || 536870912;
       if (c >= g) {
         if (d != null) {
           a[g + e] = {
-            [c]: d
+            [c]: d,
           };
           b |= 256;
           v(a, b);
@@ -1247,7 +1287,7 @@
       if ((b = a[Na]) != null) {
         return b;
       } else {
-        return a[Na] = new Map();
+        return (a[Na] = new Map());
       }
     }
     if (Na in a) {
@@ -1255,7 +1295,7 @@
     }
     b = new Map();
     Object.defineProperty(a, Na, {
-      value: b
+      value: b,
     });
     return b;
   }
@@ -1310,7 +1350,7 @@
   function J(a, b, c, d) {
     c = ic(a, d, c);
     b = hc(a, b, c);
-    if (b != null && (a = a.l, d = a[u] | 0, !(d & 2))) {
+    if (b != null && ((a = a.l), (d = a[u] | 0), !(d & 2))) {
       const e = Qb(b);
       if (e !== b) {
         b = e;
@@ -1337,18 +1377,26 @@
                 c = c.substring(0, d);
               }
               d = c.length;
-              if (!(c[0] === "-" ? d < 20 || d === 20 && Number(c.substring(0, 7)) > -922337 : d < 19 || d === 19 && Number(c.substring(0, 6)) < 922337)) {
+              if (
+                !(c[0] === "-"
+                  ? d < 20 || (d === 20 && Number(c.substring(0, 7)) > -922337)
+                  : d < 19 || (d === 19 && Number(c.substring(0, 6)) < 922337))
+              ) {
                 if (c.length < 16) {
                   pb(Number(c));
                 } else if (Xa()) {
                   c = BigInt(c);
                   x = Number(c & BigInt(4294967295)) >>> 0;
-                  y = Number(c >> BigInt(32) & BigInt(4294967295));
+                  y = Number((c >> BigInt(32)) & BigInt(4294967295));
                 } else {
                   d = +(c[0] === "-");
                   y = x = 0;
                   var e = c.length;
-                  for (let g = d, h = (e - d) % 6 + d; h <= e; g = h, h += 6) {
+                  for (
+                    let g = d, h = ((e - d) % 6) + d;
+                    h <= e;
+                    g = h, h += 6
+                  ) {
                     var f = Number(c.slice(g, h));
                     y *= 1000000;
                     x = x * 1000000 + f;
@@ -1368,7 +1416,7 @@
                 d = y;
                 if (d & -2147483648) {
                   if (Xa()) {
-                    c = "" + (BigInt(d | 0) << BigInt(32) | BigInt(c >>> 0));
+                    c = "" + ((BigInt(d | 0) << BigInt(32)) | BigInt(c >>> 0));
                   } else {
                     const [g, h] = qb(c, d);
                     c = "-" + rb(g, h);
@@ -1391,7 +1439,7 @@
             if (hb) {
               c = BigInt(c);
             } else {
-              c = gb(c) ? c ? "1" : "0" : fb(c) ? c.trim() || "0" : String(c);
+              c = gb(c) ? (c ? "1" : "0") : fb(c) ? c.trim() || "0" : String(c);
             }
             break a;
           default:
@@ -1400,16 +1448,16 @@
               pb(c);
               d = x;
               e = y;
-              if (c = e & -2147483648) {
-                d = ~d + 1 >>> 0;
+              if ((c = e & -2147483648)) {
+                d = (~d + 1) >>> 0;
                 e = ~e >>> 0;
                 if (d == 0) {
-                  e = e + 1 >>> 0;
+                  e = (e + 1) >>> 0;
                 }
               }
               f = e * 4294967296 + (d >>> 0);
               d = Number.isSafeInteger(f) ? f : rb(d, e);
-              c = typeof d === "number" ? c ? -d : d : c ? "-" + d : d;
+              c = typeof d === "number" ? (c ? -d : d) : c ? "-" + d : d;
             }
         }
       }
@@ -1467,7 +1515,7 @@
           g = false;
           h = w(k);
           for (k = 0; k < h.length; k++) {
-            const p = h[k] = w(h[k]);
+            const p = (h[k] = w(h[k]));
             if (Array.isArray(p[1])) {
               p[1] = Ua(p[1]);
             }
@@ -1489,7 +1537,6 @@
     }
     return a;
   }
-  ;
   var N = class {
     constructor(a) {
       a: {
@@ -1531,7 +1578,7 @@
                   delete e[c];
                 }
               }
-              b = b & -16760833 | (f & 1023) << 14;
+              b = (b & -16760833) | ((f & 1023) << 14);
             }
           }
         }
@@ -1554,7 +1601,6 @@
       this.channel = b;
     }
   }
-  ;
   function rc(a) {
     const b = new MessageChannel();
     sc(b.port1, a);
@@ -1575,15 +1621,14 @@
   }
   function sc(a, b) {
     if (b) {
-      a.onmessage = c => {
+      a.onmessage = (c) => {
         var d = c.data;
         c = tc(c.ports[0]);
         b(new qc(d, c));
       };
     }
   }
-  ;
-  var vc = function () {
+  var vc = (function () {
     if (!m.addEventListener || !Object.defineProperty) {
       return false;
     }
@@ -1591,7 +1636,7 @@
     var b = Object.defineProperty({}, "passive", {
       get: function () {
         a = true;
-      }
+      },
     });
     try {
       const c = () => {};
@@ -1599,22 +1644,28 @@
       m.removeEventListener("test", c, b);
     } catch (c) {}
     return a;
-  }();
+  })();
   var wc = ({
     destination: a,
     origin: b,
     V: c,
     M: d = "ZNWN1d",
-    onMessage: e
+    onMessage: e,
   }) => {
     if (b === "*") {
       throw Error("Sending to wildcard origin not allowed.");
     }
     const f = rc(e);
-    a.postMessage(c ? {
-      n: d,
-      t: c
-    } : d, b, [f.port2]);
+    a.postMessage(
+      c
+        ? {
+            n: d,
+            t: c,
+          }
+        : d,
+      b,
+      [f.port2],
+    );
     return tc(f.port1, e);
   };
   var xc = class {
@@ -1625,14 +1676,14 @@
       this.h.g(bc(a), b, c);
     }
   };
-  var zc = a => {
+  var zc = (a) => {
     var b = yc;
-    return c => {
+    return (c) => {
       const d = new b(c.data);
       return a(new qc(d, c.channel));
     };
   };
-  var Ac = a => b => a(new qc(b.data, new xc(b.channel)));
+  var Ac = (a) => (b) => a(new qc(b.data, new xc(b.channel)));
   /*
   Copyright Google LLC
   SPDX-License-Identifier: Apache-2.0
@@ -1645,16 +1696,15 @@
       return a;
     }
     try {
-      const b = c => c;
+      const b = (c) => c;
       a = Bc.createPolicy("goog#html", {
         createHTML: b,
         createScript: b,
-        createScriptURL: b
+        createScriptURL: b,
       });
     } catch (b) {}
     return a;
   }
-  ;
   var Ec = class {
     constructor(a) {
       this.g = a;
@@ -1670,7 +1720,6 @@
     var b = Cc;
     return new Ec(b ? b.createScriptURL(a) : a);
   }
-  ;
   function Gc(a, b) {
     var c = a.register;
     if (b instanceof Ec) {
@@ -1680,7 +1729,6 @@
     }
     return c.call(a, b, undefined);
   }
-  ;
   function Hc(a) {
     return String(a).replace(/\-([a-z])/g, function (b, c) {
       return c.toUpperCase();
@@ -1691,7 +1739,6 @@
       return c + d.toUpperCase();
     });
   }
-  ;
   function Jc(a, ...b) {
     if (b.length === 0) {
       return Fc(a[0]);
@@ -1702,7 +1749,6 @@
     }
     return Fc(c);
   }
-  ;
   function Kc(a, b) {
     this.type = a;
     this.target = b;
@@ -1719,8 +1765,11 @@
     this.pointerType = "";
     this.h = null;
     if (a) {
-      const b = this.type = a.type;
-      const c = a.changedTouches && a.changedTouches.length ? a.changedTouches[0] : null;
+      const b = (this.type = a.type);
+      const c =
+        a.changedTouches && a.changedTouches.length
+          ? a.changedTouches[0]
+          : null;
       this.target = a.target || a.srcElement;
       let d = a.relatedTarget;
       if (!d) {
@@ -1767,7 +1816,7 @@
       a.returnValue = false;
     }
   };
-  var Mc = "closure_listenable_" + (Math.random() * 1000000 | 0);
+  var Mc = "closure_listenable_" + ((Math.random() * 1000000) | 0);
   var Nc = 0;
   function Oc(a, b, c, d, e) {
     this.listener = a;
@@ -1786,7 +1835,6 @@
     a.src = null;
     a.h = null;
   }
-  ;
   function Qc(a) {
     this.src = a;
     this.g = {};
@@ -1821,7 +1869,7 @@
     }
     return b;
   };
-  var Rc = "closure_lm_" + (Math.random() * 1000000 | 0);
+  var Rc = "closure_lm_" + ((Math.random() * 1000000) | 0);
   var Sc = {};
   var Tc = 0;
   function Uc(a, b, c, d, e) {
@@ -1898,7 +1946,7 @@
     if (a in Sc) {
       return Sc[a];
     } else {
-      return Sc[a] = "on" + a;
+      return (Sc[a] = "on" + a);
     }
   }
   function ad(a, b) {
@@ -1923,14 +1971,14 @@
             c.removeListener(e);
           }
           Tc--;
-          if (d = Yc(c)) {
+          if ((d = Yc(c))) {
             e = a.type;
             var f;
-            if (f = e in d.g) {
+            if ((f = e in d.g)) {
               f = d.g[e];
               const k = xa(f, a);
               let p;
-              if (p = k >= 0) {
+              if ((p = k >= 0)) {
                 Array.prototype.splice.call(f, k, 1);
               }
               f = p;
@@ -1963,7 +2011,7 @@
       return null;
     }
   }
-  var bd = "__closure_events_fn_" + (Math.random() * 1000000000 >>> 0);
+  var bd = "__closure_events_fn_" + ((Math.random() * 1000000000) >>> 0);
   function Wc(a) {
     if (typeof a === "function") {
       return a;
@@ -1973,10 +2021,9 @@
     };
     return a[bd];
   }
-  ;
   function O(a, b) {
     if (typeof b === "string") {
-      if (b = cd(a, b)) {
+      if ((b = cd(a, b))) {
         a.style[b] = "none";
       }
     } else {
@@ -2006,7 +2053,6 @@
     }
     return c;
   }
-  ;
   var ed = class extends N {};
   var fd = class extends N {};
   var gd = class extends N {};
@@ -2023,7 +2069,7 @@
       } else {
         var c = b[u] | 0;
         var d = c;
-        var e = !!(c & 2) && !!(c & 4) || !!(c & 1024);
+        var e = (!!(c & 2) && !!(c & 4)) || !!(c & 1024);
         var f = e || Object.isFrozen(b);
         var g = true;
         var h = true;
@@ -2061,7 +2107,9 @@
     var b = new nd();
     if (a != null && typeof a !== "boolean") {
       b = typeof a;
-      throw Error(`Expected boolean but got ${b != "object" ? b : a ? Array.isArray(a) ? "array" : b : "null"}: ${a}`);
+      throw Error(
+        `Expected boolean but got ${b != "object" ? b : a ? (Array.isArray(a) ? "array" : b) : "null"}: ${a}`,
+      );
     }
     return E(b, 2, a);
   }
@@ -2152,7 +2200,7 @@
     0: "UNKNOWN",
     1: "API_UNAVAILABLE",
     2: "INVALID_PARAMS",
-    3: "SIZE_LIMIT_EXCEEDED"
+    3: "SIZE_LIMIT_EXCEEDED",
   };
   var S = class extends Error {
     constructor(a, b) {
@@ -2163,10 +2211,16 @@
   };
   var Td = new S(0, "An unknown error occurred.");
   var T = new S(2, "Invalid parameters entered, please fix and try again.");
-  var Ud = new S(1, "Unspecified network error. Check your internet connection and try again.");
+  var Ud = new S(
+    1,
+    "Unspecified network error. Check your internet connection and try again.",
+  );
   var Vd = new S(3, "Size limit exceeded.");
   var Wd = new S(0, "Resource URL is malformed");
-  var Xd = new S(1, "The requested Ad failed to load. Check your network and try again.");
+  var Xd = new S(
+    1,
+    "The requested Ad failed to load. Check your network and try again.",
+  );
   function Yd(a) {
     switch (a) {
       case 1:
@@ -2220,7 +2274,9 @@
           c = Ud;
           break;
         case 4:
-          console.warn("The SDK is no-op, if you are trying to verify SDK integration please use the SDK Test Suite available at https://developers.google.com/youtube/gaming/playables/certification/sdktestsuite");
+          console.warn(
+            "The SDK is no-op, if you are trying to verify SDK integration please use the SDK Test Suite available at https://developers.google.com/youtube/gaming/playables/certification/sdktestsuite",
+          );
           return;
         default:
           c = Td;
@@ -2228,9 +2284,8 @@
     }
     throw new U(c, b);
   }
-  ;
   function Zd(a, b) {
-    const c = d => {
+    const c = (d) => {
       if (d instanceof $d) {
         b(d.g);
       }
@@ -2265,7 +2320,6 @@
       this.g = b;
     }
   }
-  ;
   var be;
   var ce;
   var de = new yc();
@@ -2294,7 +2348,7 @@
     }
   }
   function Y(a, b) {
-    return new Promise(c => {
+    return new Promise((c) => {
       X(a, b, c);
     });
   }
@@ -2302,17 +2356,23 @@
     constructor(a) {
       this.g = a;
       this.target = new ae("HOST_EVENT", {
-        H: false
+        H: false,
       });
-      a = new URLSearchParams(window.location.hash.substring(1)).get("origin") || document.referrer;
-      this.channel = new xc(wc({
-        destination: window.parent,
-        origin: this.g ? a : window.location.origin,
-        M: "playableIframe",
-        onMessage: Ac(zc(b => {
-          this.target.dispatchEvent(b);
-        }))
-      }));
+      a =
+        new URLSearchParams(window.location.hash.substring(1)).get("origin") ||
+        document.referrer;
+      this.channel = new xc(
+        wc({
+          destination: window.parent,
+          origin: this.g ? a : window.location.origin,
+          M: "playableIframe",
+          onMessage: Ac(
+            zc((b) => {
+              this.target.dispatchEvent(b);
+            }),
+          ),
+        }),
+      );
     }
   };
   var he;
@@ -2324,7 +2384,7 @@
     0: "UNKNOWN",
     1: "SHOWED",
     3: "REJECTED",
-    2: "DISMISSED"
+    2: "DISMISSED",
   };
   function le(a) {
     switch (a) {
@@ -2345,13 +2405,21 @@
     }
     requestAd() {
       const a = this;
-      return l(function* () {
-        const b = yield Y(a.g, Q(14));
-        V(b.data, 14);
-        let c;
-        let d;
-        return le((c = J(b.data, P, 2, G)) == null ? undefined : (d = J(c, ed, 6, Bd)) == null ? undefined : oc(d, 1));
-      }());
+      return l(
+        (function* () {
+          const b = yield Y(a.g, Q(14));
+          V(b.data, 14);
+          let c;
+          let d;
+          return le(
+            (c = J(b.data, P, 2, G)) == null
+              ? undefined
+              : (d = J(c, ed, 6, Bd)) == null
+                ? undefined
+                : oc(d, 1),
+          );
+        })(),
+      );
     }
   };
   var ne = window !== window.parent;
@@ -2372,21 +2440,31 @@
     }
     sendScore(a) {
       const b = this;
-      return l(function* () {
-        if (!Number.isInteger(a.value)) {
-          throw new U(T, 4, `Score value must be an integer and the value entered was: ${a.value}`);
-        }
-        if (!Number.isSafeInteger(a.value)) {
-          throw new U(T, 4, `Score value must be less than the maximum safe integer in Javascript ${Number.MAX_SAFE_INTEGER} and the value entered was: ${a.value}`);
-        }
-        var c = b.g;
-        var d = Q(2);
-        var e = new Md();
-        e = K(e, 1, a.value);
-        d = I(d, 3, R, e);
-        c = yield Y(c, d);
-        V(c.data, 4);
-      }());
+      return l(
+        (function* () {
+          if (!Number.isInteger(a.value)) {
+            throw new U(
+              T,
+              4,
+              `Score value must be an integer and the value entered was: ${a.value}`,
+            );
+          }
+          if (!Number.isSafeInteger(a.value)) {
+            throw new U(
+              T,
+              4,
+              `Score value must be less than the maximum safe integer in Javascript ${Number.MAX_SAFE_INTEGER} and the value entered was: ${a.value}`,
+            );
+          }
+          var c = b.g;
+          var d = Q(2);
+          var e = new Md();
+          e = K(e, 1, a.value);
+          d = I(d, 3, R, e);
+          c = yield Y(c, d);
+          V(c.data, 4);
+        })(),
+      );
     }
     openYTContent(a) {
       return pe(this.g, a);
@@ -2462,7 +2540,7 @@
   };
   function ye(a) {
     setInterval(() => {
-      const b = window.performance && window.performance.memory || null;
+      const b = (window.performance && window.performance.memory) || null;
       if (b) {
         se(a.g, b.usedJSHeapSize);
       }
@@ -2479,10 +2557,18 @@
   };
   function Be(a) {
     a.navigator = window.navigator;
-    if (typeof performance.getEntriesByType === "function" && "encodedBodySize" in PerformanceResourceTiming.prototype && "decodedBodySize" in PerformanceResourceTiming.prototype && "transferSize" in PerformanceResourceTiming.prototype) {
-      new PerformanceObserver(b => {
-        b.getEntries().forEach(c => {
-          if (c.entryType === "resource" && !c.name.includes("https://www.youtube.com/game_api")) {
+    if (
+      typeof performance.getEntriesByType === "function" &&
+      "encodedBodySize" in PerformanceResourceTiming.prototype &&
+      "decodedBodySize" in PerformanceResourceTiming.prototype &&
+      "transferSize" in PerformanceResourceTiming.prototype
+    ) {
+      new PerformanceObserver((b) => {
+        b.getEntries().forEach((c) => {
+          if (
+            c.entryType === "resource" &&
+            !c.name.includes("https://www.youtube.com/game_api")
+          ) {
             a.o++;
             a.j += c.encodedBodySize;
             if (c.transferSize === 0 && c.decodedBodySize > 0) {
@@ -2509,10 +2595,14 @@
         });
       }).observe({
         type: "resource",
-        buffered: true
+        buffered: true,
       });
-      if (a.navigator && "serviceWorker" in a.navigator && a.navigator.serviceWorker.addEventListener) {
-        a.navigator.serviceWorker.addEventListener("message", b => {
+      if (
+        a.navigator &&
+        "serviceWorker" in a.navigator &&
+        a.navigator.serviceWorker.addEventListener
+      ) {
+        a.navigator.serviceWorker.addEventListener("message", (b) => {
           a.u++;
           if (b.data.cacheHit) {
             a.s++;
@@ -2574,9 +2664,11 @@
     }
   }
   function Je(a) {
-    const b = new URLSearchParams(window.location.hash.substring(1)).get("debug") !== null;
+    const b =
+      new URLSearchParams(window.location.hash.substring(1)).get("debug") !==
+      null;
     if (b || window.enableSendingResourceLoadedEvents === true) {
-      Ce(a.o, c => {
+      Ce(a.o, (c) => {
         var d = a.u;
         var e = Q(1);
         var f = rd(3);
@@ -2614,7 +2706,22 @@
     re(a.j.g);
   }
   function Ie(a) {
-    X(W(), Rd(Q(12), Kd(Jd(Gd(Fd(K(Ed(new Ld(), a.s), 2, performance.now()), te(a.g.i)), te(a.g.g)), wd(a.m)), ze(a.j))));
+    X(
+      W(),
+      Rd(
+        Q(12),
+        Kd(
+          Jd(
+            Gd(
+              Fd(K(Ed(new Ld(), a.s), 2, performance.now()), te(a.g.i)),
+              te(a.g.g),
+            ),
+            wd(a.m),
+          ),
+          ze(a.j),
+        ),
+      ),
+    );
     He(a);
     a.h = setTimeout(() => {
       Ie(a);
@@ -2637,8 +2744,12 @@
     return Le;
   }
   function Ne(a) {
-    if (a.navigator && "serviceWorker" in a.navigator && a.navigator.serviceWorker.addEventListener) {
-      a.navigator.serviceWorker.addEventListener("message", b => {
+    if (
+      a.navigator &&
+      "serviceWorker" in a.navigator &&
+      a.navigator.serviceWorker.addEventListener
+    ) {
+      a.navigator.serviceWorker.addEventListener("message", (b) => {
         if (b.data.serviceWorkerMessageKind === "clientStatusRequest") {
           Oe(a);
         }
@@ -2646,10 +2757,14 @@
     }
   }
   function Oe(a) {
-    if (a.navigator && "serviceWorker" in a.navigator && a.navigator.serviceWorker.controller) {
+    if (
+      a.navigator &&
+      "serviceWorker" in a.navigator &&
+      a.navigator.serviceWorker.controller
+    ) {
       a.navigator.serviceWorker.controller.postMessage({
         serviceWorkerMessageKind: "clientStatus",
-        shouldCacheResources: a.shouldCacheResources
+        shouldCacheResources: a.shouldCacheResources,
       });
     }
   }
@@ -2704,14 +2819,13 @@
     c = I(c, 8, R, b);
     X(a, c);
   }
-  ;
   var Ue = class {
     constructor() {
       this.h = ne;
       this.i = new ae("GAME_DATA_EVENT");
       this.g = W();
       this.j = Ke();
-      je(this.g, a => {
+      je(this.g, (a) => {
         switch (oc(a.data, 1)) {
           case 7:
             if (gc(a.data, Ad, 5)) {
@@ -2722,45 +2836,61 @@
     }
     saveData(a) {
       const b = this;
-      return l(function* () {
-        if (b.h) {
-          try {
-            encodeURIComponent(a);
-          } catch (f) {
-            throw new U(T, 3, "Failed to encode save data");
+      return l(
+        (function* () {
+          if (b.h) {
+            try {
+              encodeURIComponent(a);
+            } catch (f) {
+              throw new U(T, 3, "Failed to encode save data");
+            }
+            var c = new Blob([a]).size;
+            if (c > 3145727) {
+              var d = new hd();
+              c = kc(d, 3, id, A(c));
+              throw new U(Vd, 3, undefined, c);
+            }
+            c = b.g;
+            d = Q(3);
+            var e = new fd();
+            e = E(e, 1, B(a));
+            d = I(d, 4, R, e);
+            c = yield Y(c, d);
+            V(c.data, 3);
           }
-          var c = new Blob([a]).size;
-          if (c > 3145727) {
-            var d = new hd();
-            c = kc(d, 3, id, A(c));
-            throw new U(Vd, 3, undefined, c);
-          }
-          c = b.g;
-          d = Q(3);
-          var e = new fd();
-          e = E(e, 1, B(a));
-          d = I(d, 4, R, e);
-          c = yield Y(c, d);
-          V(c.data, 3);
-        }
-      }());
+        })(),
+      );
     }
     loadData() {
       const a = this;
-      return l(function* () {
-        if (!a.h) {
-          return "";
-        }
-        const b = yield Y(a.g, Q(4));
-        V(b.data, 2);
-        let c;
-        let d;
-        return ((c = J(b.data, P, 2, G)) == null ? undefined : (d = J(c, fd, 3, Bd)) == null ? undefined : nc(d, 1)) || "";
-      }());
+      return l(
+        (function* () {
+          if (!a.h) {
+            return "";
+          }
+          const b = yield Y(a.g, Q(4));
+          V(b.data, 2);
+          let c;
+          let d;
+          return (
+            ((c = J(b.data, P, 2, G)) == null
+              ? undefined
+              : (d = J(c, fd, 3, Bd)) == null
+                ? undefined
+                : nc(d, 1)) || ""
+          );
+        })(),
+      );
     }
     firstFrameReady() {
-      var a = Array.from(document.getElementsByTagName("script")).filter(b => !b.src.endsWith("/@vite/client"))[0];
-      a = !!a && a.src.startsWith("https://www.youtube.com/game_api/") && a.attributes.getNamedItem("defer") === null && a.attributes.getNamedItem("async") === null;
+      var a = Array.from(document.getElementsByTagName("script")).filter(
+        (b) => !b.src.endsWith("/@vite/client"),
+      )[0];
+      a =
+        !!a &&
+        a.src.startsWith("https://www.youtube.com/game_api/") &&
+        a.attributes.getNamedItem("defer") === null &&
+        a.attributes.getNamedItem("async") === null;
       X(this.g, Pd(Q(1), ud(td(rd(1), md(a)))));
     }
     gameReady() {
@@ -2778,25 +2908,27 @@
     }
     shareInviteCode(a) {
       const b = this;
-      return l(function* () {
-        if (a.length === 0) {
-          throw new U(T, 12, "Invite code cannot be empty");
-        }
-        if (new TextEncoder().encode(a).length > 8) {
-          throw new U(T, 12, "Invite code provided exceeded 8 bytes");
-        }
-        var c = b.g;
-        var d = Q(13);
-        d = kc(d, 11, R, B(a));
-        c = yield Y(c, d);
-        V(c.data, 12);
-      }());
+      return l(
+        (function* () {
+          if (a.length === 0) {
+            throw new U(T, 12, "Invite code cannot be empty");
+          }
+          if (new TextEncoder().encode(a).length > 8) {
+            throw new U(T, 12, "Invite code provided exceeded 8 bytes");
+          }
+          var c = b.g;
+          var d = Q(13);
+          d = kc(d, 11, R, B(a));
+          c = yield Y(c, d);
+          V(c.data, 12);
+        })(),
+      );
     }
   };
   function Ve(a, b) {
     const c = {
       level: 1,
-      source: 1
+      source: 1,
     };
     if (b) {
       c.v = b;
@@ -2812,7 +2944,7 @@
       this.h = a;
       this.g = b;
       this.i = false;
-      this.j = c => {
+      this.j = (c) => {
         Ve(this, c.reason instanceof S ? c.reason : undefined);
       };
       this.o = this.g.onerror;
@@ -2841,47 +2973,56 @@
     error(...a) {
       this.h.log({
         level: 1,
-        source: 0
+        source: 0,
       });
       this.m(...a);
     }
     warn(...a) {
       this.h.log({
         level: 0,
-        source: 0
+        source: 0,
       });
       this.s(...a);
     }
   };
   function Xe(a, b) {
-    X(a.h, Qd(Q(6), kd(new ld(), b.map((c, d) => {
-      c = b[b.length - 1 - d];
-      d = new jd();
-      a: switch (c.level) {
-        case 0:
-          var e = 1;
-          break a;
-        case 1:
-          e = 2;
-          break a;
-        default:
-          e = 0;
-      }
-      d = E(d, 2, z(e));
-      d = E(d, 1, z(Re(c.source)));
-      if (c.v) {
-        e = E(d, 6, z(Se(c.v)));
-        e = E(e, 4, B(c.message));
-        E(e, 5, B(c.O));
-        if (c.v instanceof U && c.v.g !== 0) {
-          E(d, 7, z(c.v.g));
-          if (c.v.data) {
-            H(d, 8, c.v.data);
-          }
-        }
-      }
-      return d;
-    }))));
+    X(
+      a.h,
+      Qd(
+        Q(6),
+        kd(
+          new ld(),
+          b.map((c, d) => {
+            c = b[b.length - 1 - d];
+            d = new jd();
+            a: switch (c.level) {
+              case 0:
+                var e = 1;
+                break a;
+              case 1:
+                e = 2;
+                break a;
+              default:
+                e = 0;
+            }
+            d = E(d, 2, z(e));
+            d = E(d, 1, z(Re(c.source)));
+            if (c.v) {
+              e = E(d, 6, z(Se(c.v)));
+              e = E(e, 4, B(c.message));
+              E(e, 5, B(c.O));
+              if (c.v instanceof U && c.v.g !== 0) {
+                E(d, 7, z(c.v.g));
+                if (c.v.data) {
+                  H(d, 8, c.v.data);
+                }
+              }
+            }
+            return d;
+          }),
+        ),
+      ),
+    );
   }
   var Ye = class {
     constructor() {
@@ -2895,13 +3036,13 @@
     logError() {
       this.log({
         level: 1,
-        source: 2
+        source: 2,
       });
     }
     logWarning() {
       this.log({
         level: 0,
-        source: 2
+        source: 2,
       });
     }
     log(a) {
@@ -2912,7 +3053,7 @@
     disableConsoleLog: false,
     enableNerdStats: false,
     enableServiceWorker: false,
-    enableServiceWorkerKillswitch: false
+    enableServiceWorkerKillswitch: false,
   };
   function $e(a) {
     if (typeof a === "boolean") {
@@ -2941,61 +3082,70 @@
           disableConsoleLog: $e(c.disableConsoleLog),
           enableNerdStats: $e(c.enableNerdStats),
           enableServiceWorker: $e(c.enableServiceWorker),
-          enableServiceWorkerKillswitch: $e(c.enableServiceWorkerKillswitch)
+          enableServiceWorkerKillswitch: $e(c.enableServiceWorkerKillswitch),
         };
       }
     }
     return af;
   }
-  ;
   function cf() {
-    l(function* () {
-      try {
-        yield Gc(navigator.serviceWorker, Jc`/null_sw.js`);
-      } catch (a) {
-        console.error("Failed to register null service worker.", a);
-      }
-    }());
+    l(
+      (function* () {
+        try {
+          yield Gc(navigator.serviceWorker, Jc`/null_sw.js`);
+        } catch (a) {
+          console.error("Failed to register null service worker.", a);
+        }
+      })(),
+    );
   }
   function df() {
-    l(function* () {
-      try {
-        yield Gc(navigator.serviceWorker, Jc`/sw.js`);
-      } catch (a) {
-        console.error("Failed to register service worker.", a);
-      }
-    }());
+    l(
+      (function* () {
+        try {
+          yield Gc(navigator.serviceWorker, Jc`/sw.js`);
+        } catch (a) {
+          console.error("Failed to register service worker.", a);
+        }
+      })(),
+    );
   }
   function ef(a) {
-    l(function* () {
-      try {
-        yield ff();
-      } catch (b) {
-        console.error("Failed to unregister service worker.", b);
-      }
-      try {
-        yield gf(a);
-      } catch (b) {
-        console.error("Failed to delete cache entries.", b);
-      }
-    }());
+    l(
+      (function* () {
+        try {
+          yield ff();
+        } catch (b) {
+          console.error("Failed to unregister service worker.", b);
+        }
+        try {
+          yield gf(a);
+        } catch (b) {
+          console.error("Failed to delete cache entries.", b);
+        }
+      })(),
+    );
   }
   function ff() {
-    return l(function* () {
-      if (navigator && "serviceWorker" in navigator) {
-        yield navigator.serviceWorker.getRegistration("/");
-      }
-    }());
+    return l(
+      (function* () {
+        if (navigator && "serviceWorker" in navigator) {
+          yield navigator.serviceWorker.getRegistration("/");
+        }
+      })(),
+    );
   }
   function gf(a) {
-    return l(function* () {
-      if (a && "keys" in a) {
-        var b = yield a.keys();
-        if (b) {
-          yield Promise.all(b.map(c => a.delete(c)));
+    return l(
+      (function* () {
+        if (a && "keys" in a) {
+          var b = yield a.keys();
+          if (b) {
+            yield Promise.all(b.map((c) => a.delete(c)));
+          }
         }
-      }
-    }());
+      })(),
+    );
   }
   var hf = class {
     constructor() {
@@ -3017,7 +3167,7 @@
     constructor() {
       this.j = ne;
       this.m = new ae("AUDIO_EVENT", {
-        J: true
+        J: true,
       });
       this.o = false;
       this.g = W();
@@ -3026,7 +3176,7 @@
       this.h = new ae("LIFECYCLE_EVENT");
       this.u = 10000;
       this.s = 0;
-      je(this.g, a => {
+      je(this.g, (a) => {
         switch (oc(a.data, 1)) {
           case 2:
             var b;
@@ -3034,7 +3184,12 @@
               b = undefined;
             } else {
               b = D(b, 1);
-              b = b == null || typeof b === "boolean" ? b : typeof b === "number" ? !!b : undefined;
+              b =
+                b == null || typeof b === "boolean"
+                  ? b
+                  : typeof b === "number"
+                    ? !!b
+                    : undefined;
               b = b ?? false;
             }
             if (this.j && b !== undefined) {
@@ -3066,12 +3221,17 @@
             X(b, a);
         }
       });
-      Uc(window, "pointerdown", a => {
-        if (!!a.h.isTrusted && !(Date.now() - this.s < this.u)) {
-          this.s = Date.now();
-          X(this.g, Q(10));
-        }
-      }, true);
+      Uc(
+        window,
+        "pointerdown",
+        (a) => {
+          if (!!a.h.isTrusted && !(Date.now() - this.s < this.u)) {
+            this.s = Date.now();
+            X(this.g, Q(10));
+          }
+        },
+        true,
+      );
       Je(this.i);
       Pe(this.D);
     }
@@ -3090,7 +3250,7 @@
       if (!a.T) {
         Te(this.g, 6);
       }
-      return Zd(this.h, b => {
+      return Zd(this.h, (b) => {
         if (b === 1) {
           a();
         }
@@ -3098,7 +3258,7 @@
     }
     onResume(a) {
       Te(this.g, 7);
-      return Zd(this.h, b => {
+      return Zd(this.h, (b) => {
         if (b === 0) {
           a();
         }
@@ -3106,16 +3266,30 @@
     }
     getLanguage() {
       const a = this;
-      return l(function* () {
-        const b = yield Y(a.g, Q(5));
-        V(b.data, 8);
-        let c;
-        return ((c = J(b.data, P, 2, G)) == null ? undefined : c.getLanguage()) || "en";
-      }());
+      return l(
+        (function* () {
+          const b = yield Y(a.g, Q(5));
+          V(b.data, 8);
+          let c;
+          return (
+            ((c = J(b.data, P, 2, G)) == null ? undefined : c.getLanguage()) ||
+            "en"
+          );
+        })(),
+      );
     }
   };
-  const kf = new class {
-    constructor(a = ne, b = new oe(), c = new me(), d = new qe(), e = new Ue(), f = new Ye(), g = new jf(), h = new hf()) {
+  const kf = new (class {
+    constructor(
+      a = ne,
+      b = new oe(),
+      c = new me(),
+      d = new qe(),
+      e = new Ue(),
+      f = new Ye(),
+      g = new jf(),
+      h = new hf(),
+    ) {
       this.g = a;
       this.h = b;
       this.ads = c;
@@ -3123,56 +3297,93 @@
       this.game = e;
       this.health = f;
       this.system = g;
-      document.addEventListener("DOMContentLoaded", () => {
-        const k = document.body;
-        O(k, "touch-action");
-        O(k, "overscroll-behavior");
-        O(k, "user-select");
-        O(k, "-webkit-user-select");
-        O(k, "-ms-user-select");
-        O(k, "-moz-user-select");
-        O(k, "-o-user-select");
-      });
-      if (this.g) {
+      if (typeof document !== "undefined") {
+        document.addEventListener("DOMContentLoaded", () => {
+          const k = document.body;
+          O(k, "touch-action");
+          O(k, "overscroll-behavior");
+          O(k, "user-select");
+          O(k, "-webkit-user-select");
+          O(k, "-ms-user-select");
+          O(k, "-moz-user-select");
+          O(k, "-o-user-select");
+        });
+      }
+      if (this.g && typeof window !== "undefined") {
         Object.defineProperty(window, "localStorage", {
           value: null,
-          writable: false
+          writable: false,
         });
         Object.defineProperty(window, "sessionStorage", {
           value: null,
-          writable: false
+          writable: false,
         });
         Object.defineProperty(window, "indexedDB", {
           value: null,
-          writable: false
+          writable: false,
         });
         Object.defineProperty(window, "caches", {
           value: null,
-          writable: false
+          writable: false,
         });
         Object.defineProperty(document, "cookie", {
           value: null,
-          writable: false
+          writable: false,
         });
       }
     }
-  }();
+  })();
   n("ytgame", kf.h);
   n("ytgame.ads", kf.ads);
   n("ytgame.engagement", kf.engagement);
   n("ytgame.game", kf.game);
   n("ytgame.health", kf.health);
   n("ytgame.system", kf.system);
-  pe = (a, b) => l(function* () {
-    var c = b.id;
-    if (c.length !== 11 || !/^[-A-Za-z0-9_]+$/.test(c) || !"AEIMQUYcgkosw048".includes(c[10]) || c === "GU5U2spHI_4") {
-      throw new U(T, 15, "Invalid format for content being passed");
-    }
-    c = Q(15);
-    var d = new gd();
-    d = E(d, 1, B(b.id));
-    c = I(c, 12, R, d);
-    c = yield Y(a, c);
-    V(c.data, 15);
-  }());
-}).call(this);
+  pe = (a, b) =>
+    l(
+      (function* () {
+        var c = b.id;
+        if (
+          c.length !== 11 ||
+          !/^[-A-Za-z0-9_]+$/.test(c) ||
+          !"AEIMQUYcgkosw048".includes(c[10]) ||
+          c === "GU5U2spHI_4"
+        ) {
+          throw new U(T, 15, "Invalid format for content being passed");
+        }
+        c = Q(15);
+        var d = new gd();
+        d = E(d, 1, B(b.id));
+        c = I(c, 12, R, d);
+        c = yield Y(a, c);
+        V(c.data, 15);
+      })(),
+    );
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = {
+      ytgame: m.ytgame,
+      ytgameAds: m["ytgame.ads"],
+      ytgameEngagement: m["ytgame.engagement"],
+      ytgameGame: m["ytgame.game"],
+      ytgameHealth: m["ytgame.health"],
+      ytgameSystem: m["ytgame.system"],
+    };
+  }
+  if (typeof globalScope === "object" && globalScope) {
+    globalScope.ytgame = m.ytgame;
+    globalScope["ytgame.ads"] = m["ytgame.ads"];
+    globalScope["ytgame.engagement"] = m["ytgame.engagement"];
+    globalScope["ytgame.game"] = m["ytgame.game"];
+    globalScope["ytgame.health"] = m["ytgame.health"];
+    globalScope["ytgame.system"] = m["ytgame.system"];
+  }
+})(
+  typeof globalThis !== "undefined"
+    ? globalThis
+    : typeof window !== "undefined"
+      ? window
+      : typeof global !== "undefined"
+        ? global
+        : {},
+);
